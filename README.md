@@ -1,7 +1,7 @@
 ##UDP/IP Terminal Chat (uchat)
 
 * **uchat**
-![Terminal Message](https://github.com/abudawud/tmsg/blob/master/doc/tmsg.png)
+![Terminal Message](https://github.com/abudawud/uchat/blob/master/doc/sc.png)
 
 ##AUTHOR
 written by Ahmad Waris Al H.

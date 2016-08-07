@@ -22,9 +22,49 @@
 #include <ncurses.h>
 #include <string.h>
 
-#define MINPUT    3
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+#define UDP_PROTO    17
+#define MINPUT       3
+
+
+static WINDOW *winses, *winmsg;
+
+static void initwin(void);
+static int geti(void);
+static void puto(const char c);
+static void refi(void);
+static void refo(void);
+static void printe(const char *msg);
+
 int main(int argc, char *argv[]){
-   WINDOW *winses, *winmsg;
+   int sfd;
+   struct sockaddr_in addr;
+   initwin();
+
+   sfd = socket(AF_INET, SOCK_DGRAM, UDP_PROTO);
+   if(sfd == -1){
+      printe("Socket: ");
+      exit(EXIT_FAILURE);
+   }
+
+   if (SERVER)
+
+
+   while(1){
+      refi();
+      puto(geti());
+      refo();
+   }
+
+   getch();
+   endwin();
+
+   return 0;
+}
+  
+static void initwin(void){
    int t_line, t_col,
        i, j;
    char ses[] = "-[ Seasion ]-";
@@ -35,7 +75,6 @@ int main(int argc, char *argv[]){
 
    start_color();
    init_pair(1, COLOR_BLACK, COLOR_WHITE);
-//   init_pair(0, 0, 0);
 
    getmaxyx(stdscr, t_line, t_col);
    printw("+%s",ses);
@@ -72,15 +111,20 @@ int main(int argc, char *argv[]){
    mvwin(winmsg, t_line - 1, 2);
    scrollok(winmsg, TRUE);
    wrefresh(winmsg);
+}
 
-   while(1){
-      wrefresh(winmsg);
-      waddch(winses,wgetch(winmsg));
-      wrefresh(winses);
-   }
+static int geti(void){
+   return (wgetch(winmsg));
+}
 
-   getch();
-   endwin();
+static void puto(const char c){
+   waddch(winses, c);
+}
 
-   return 0;
+static void refi(void){
+   wrefresh(winmsg);
+}
+
+static void refo(void){
+   wrefresh(winses);
 }

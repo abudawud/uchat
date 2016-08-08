@@ -21,9 +21,11 @@
 
 #include <ncurses.h>
 #include <string.h>
+#include <stdio.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <stdlib.h>
 
 #define UDP_PROTO    17
 #define MINPUT       3
@@ -37,25 +39,24 @@ static void puto(const char c);
 static void refi(void);
 static void refo(void);
 static void printe(const char *msg);
+static void prints(const char *msg);
 
 int main(int argc, char *argv[]){
-   int sfd;
+   int sfd, ch;
    struct sockaddr_in addr;
+
+   ch = getopt(argc, argv, "s:c:
    initwin();
 
+   prints("Creating socket...\n");
    sfd = socket(AF_INET, SOCK_DGRAM, UDP_PROTO);
-   if(sfd == -1){
-      printe("Socket: ");
-      exit(EXIT_FAILURE);
-   }
-
-   if (SERVER)
-
+   if(sfd == -1)
+      printe("Socket");
+   else
+      prints("Socket created\n");
 
    while(1){
-      refi();
       puto(geti());
-      refo();
    }
 
    getch();
@@ -114,11 +115,13 @@ static void initwin(void){
 }
 
 static int geti(void){
+   refi();
    return (wgetch(winmsg));
 }
 
 static void puto(const char c){
    waddch(winses, c);
+   refo();
 }
 
 static void refi(void){
@@ -127,4 +130,21 @@ static void refi(void){
 
 static void refo(void){
    wrefresh(winses);
+}
+
+static void printe(const char *msg){
+   scrollok(winmsg, FALSE);
+   cbreak();
+   refi();
+   wprintw(winses, "%s: %m\n", msg);
+   wprintw(winses, "Exiting...");
+   refo();
+   geti();
+   endwin();
+   exit(EXIT_FAILURE);
+}
+
+static void prints(const char *msg){
+   wprintw(winses, "%s", msg);
+   refo();
 }
